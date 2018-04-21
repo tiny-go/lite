@@ -20,7 +20,7 @@ type Module struct {
 
 // Init static Module.
 func (m *Module) Init(mux *mux.Router) error {
-	// TODO: deregister existing module routes before building new ones
+	// build routes for registered controllers
 	for name, resource := range m.Resources {
 		basePath := []string{"/", m.Name, name}
 		// list of available methods for current resource (required for OPTIONS request)
