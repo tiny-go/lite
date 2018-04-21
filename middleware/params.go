@@ -12,8 +12,8 @@ import (
 type paramsKey struct{}
 
 // GorillaParams extracts URI params from the request (when using gorolla/mux).
-func GorillaParams(next http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func GorillaParams(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		// convert gorilla Params to internal representation
 		ps := make(restful.Params, len(vars))
@@ -23,7 +23,7 @@ func GorillaParams(next http.Handler) http.HandlerFunc {
 		r = r.WithContext(context.WithValue(r.Context(), paramsKey{}, ps))
 		// call the next handler
 		next.ServeHTTP(w, r)
-	}
+	})
 }
 
 // ParamsFromContext pulls the URL parameters from a request context,

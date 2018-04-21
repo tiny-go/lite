@@ -12,7 +12,7 @@ import (
 
 type codecKey struct{ kind string }
 
-// Codec middleware puts the correct (hardcoded JSON ATM) Codec on the context
+// Codec middleware puts the correct codecs into the context.
 func Codec(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var reqCodec, resCodec restful.Codec
