@@ -10,6 +10,14 @@ import (
 	"github.com/Alma-media/restful/errors"
 )
 
+// TODO:
+// - provide a list of available codecs per action/method with an ability to
+// set default
+// - provide error handler func (to decide whether panic or send an error directly)
+// - provide several constructors to instantiate middleware with panic/http/etc
+// error handlers
+// - implement smart/independent codec registry
+
 type codecKey struct{ kind string }
 
 // Codec middleware puts the correct codecs into the context.
