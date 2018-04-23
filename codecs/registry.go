@@ -9,15 +9,9 @@ import (
 )
 
 var (
-	codecs   registry
+	codecs   globalRegistry
 	codecsMu sync.RWMutex
 )
-
-// Registry represents codec registry/list.
-type Registry interface {
-	Get(mime string) restful.Codec
-	// WithDefault()
-}
 
 // Global returns global codec registry.
 func Global() Registry {
@@ -25,33 +19,20 @@ func Global() Registry {
 	return codecs
 }
 
-type codecInitFunc func(string) restful.Codec
-
-type registry map[string]codecInitFunc
-
-// Get appropriate codec by provided MimeType, if there is no exact match (that
-// is possible using codecs such as Multipart), it tries to detect a codec in an
-// opposite way, comparing default codec MimeType to the provided argument.
-func (r registry) Get(mime string) restful.Codec {
+// Register makes codec available for provided mime type.
+func Register(mime string, f codecInitFunc) {
 	codecsMu.Lock()
 	defer codecsMu.Unlock()
-	// strict match
-	if codec, ok := r[mime]; ok {
-		return codec(mime)
+
+	if _, ok := codecs[mime]; ok {
+		panic(fmt.Sprintf("codec with MimeType %q already registered", mime))
 	}
-	// submatch (for example "multipart/form-data; boundary=-----...")
-	for mediatype, codec := range r {
-		// ignore default codec
-		if mediatype != "" && mediatype != "*/*" {
-			if strings.Contains(mime, mediatype+";") {
-				return codec(mime)
-			}
-		}
-	}
-	return nil
+	codecs[mime] = f
 }
 
-// Default allows to set codec as adefault by mime type.
+// Default allows setting Codec as a default by mime type. If codec was not found
+// function returns an error. This function can be called multiple times overriding
+// the previous values.
 func Default(mime string) error {
 	codecsMu.Lock()
 	defer codecsMu.Unlock()
@@ -65,13 +46,38 @@ func Default(mime string) error {
 	return nil
 }
 
-// Register makes codec available for provided MimeType.
-func Register(mime string, f codecInitFunc) {
+// Registry represents codec registry/list.
+type Registry interface {
+	Get(mime string) restful.Codec
+}
+
+// codecInitFunc is a codec constructor which can either return a singleton instance
+// or initialize a new codec for every request (for example multipart, because each
+// request has its own unique boundary).
+type codecInitFunc func(string) restful.Codec
+
+// globalRegistry is a clobal codec registry that is used to store available codec
+// and retrieve them by mime type.
+type globalRegistry map[string]codecInitFunc
+
+// Get appropriate codec by provided MimeType, if there is no exact match (that
+// is possible using codecs such as Multipart), it tries to detect a codec in an
+// opposite way, comparing default codec MimeType to the provided argument.
+func (r globalRegistry) Get(mime string) restful.Codec {
 	codecsMu.Lock()
 	defer codecsMu.Unlock()
-
-	if _, ok := codecs[mime]; ok {
-		panic(fmt.Sprintf("codec with MimeType %q already registered", mime))
+	// find strict match
+	if codec, ok := r[mime]; ok {
+		return codec(mime)
 	}
-	codecs[mime] = f
+	// find submatch (for example "multipart/form-data; boundary=-----...")
+	for mediatype, codec := range r {
+		// ignore default codec
+		if mediatype != "" && mediatype != "*/*" {
+			if strings.Contains(mime, mediatype+";") {
+				return codec(mime)
+			}
+		}
+	}
+	return nil
 }
