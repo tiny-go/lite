@@ -16,6 +16,7 @@ var (
 // Registry represents codec registry/list.
 type Registry interface {
 	Get(mime string) restful.Codec
+	// WithDefault()
 }
 
 // Global returns global codec registry.
@@ -50,19 +51,18 @@ func (r registry) Get(mime string) restful.Codec {
 	return nil
 }
 
-// Default allows to register provided codec as a default (will be used in case
-// Content-Type/Accept are not provided) plus makes the codec available by mime.
-func Default(mime string, f codecInitFunc) {
+// Default allows to set codec as adefault by mime type.
+func Default(mime string) error {
 	codecsMu.Lock()
 	defer codecsMu.Unlock()
 
-	// TODO: Default codec registry
-	if _, ok := codecs[""]; ok {
-		panic(fmt.Sprintf("cannot register %q as a default codec: default already registered", mime))
+	f, ok := codecs[mime]
+	if !ok {
+		return fmt.Errorf("codec %q is not registered", mime)
 	}
 	codecs[""] = f
 	codecs["*/*"] = f
-	codecs[mime] = f
+	return nil
 }
 
 // Register makes codec available for provided MimeType.

@@ -13,6 +13,8 @@ const (
 	DataTypeJSON = "application/json"
 )
 
+var codec = &JSON{}
+
 // JSON codec.
 type JSON struct{}
 
@@ -34,9 +36,5 @@ func (j *JSON) MimeType() string {
 func init() {
 	// since JSON is a stateless codec (no need to set boundary per request) we can
 	// always return the same instance
-	codec := &JSON{}
-	// register as default codec
-	codecs.Default(func(string) restful.Codec {
-		return codec
-	})
+	codecs.Register(DataTypeJSON, func(string) restful.Codec { return codec })
 }
