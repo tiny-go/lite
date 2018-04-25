@@ -10,7 +10,7 @@ func Register(alias string, module Module) {
 }
 
 // Modules iterates all registered modules applying provided func.
-func Modules(f func(string, Module) bool) {
+func Modules(f func(alias string, module Module) bool) {
 	for alias, resource := range modules {
 		if !f(alias, resource) {
 			break

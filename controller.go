@@ -5,10 +5,7 @@ import (
 )
 
 // Controller interface is a bare minimal controller.
-type Controller interface{
-	 mw.Controller
-	 Init() error
+type Controller interface {
+	mw.Controller
+	Init() error
 }
-
-// BaseController ...
-type BaseController = mw.BaseController
