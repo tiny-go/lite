@@ -16,7 +16,7 @@ func options(methods []string) http.HandlerFunc {
 	}
 }
 
-// getPlural handles plural GET request on provided resource.
+// getSingle handles single GET request on provided resource.
 func getSingle(controller SingleGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
@@ -42,7 +42,7 @@ func getPlural(controller PluralGetter) http.HandlerFunc {
 	}
 }
 
-// postSingle handles single model POST request for provided resource.
+// postSingle handles single POST request on provided resource.
 func postSingle(controller SinglePoster) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
@@ -57,7 +57,7 @@ func postSingle(controller SinglePoster) http.HandlerFunc {
 	}
 }
 
-// postPlural handles plural model POST request for provided resource.
+// postPlural handles plural POST request on provided resource.
 func postPlural(controller PluralPoster) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
@@ -77,6 +77,21 @@ func patchSingle(controller SinglePatcher) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
 		data, err := controller.Patch(r.Context(), mux.Vars(r)["pk"], func(v interface{}) error {
+			return mw.RequestCodecFromContext(r.Context()).Decoder(r.Body).Decode(v)
+		})
+		if err != nil {
+			panic(err)
+		}
+		// send data to the client
+		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
+	}
+}
+
+// patchPlural handles plural PATCH request for provided resource.
+func patchPlural(controller PluralPatcher) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// call the controller action
+		data, err := controller.PatchAll(r.Context(), func(v interface{}) error {
 			return mw.RequestCodecFromContext(r.Context()).Decoder(r.Body).Decode(v)
 		})
 		if err != nil {
