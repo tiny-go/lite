@@ -5,12 +5,27 @@ import (
 	"log"
 	"net/http"
 	"path"
+	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/tiny-go/codec/driver"
 	"github.com/tiny-go/errors"
 	"github.com/tiny-go/middleware"
 )
+
+type methods []string
+
+func (ms *methods) add(method string) {
+	*ms = append(*ms, method)
+}
+
+func (ms *methods) join() string {
+	return strings.Join(*ms, ",")
+}
+
+func (ms *methods) empty() bool {
+	return len(*ms) == 0
+}
 
 // Handler combines all static modules (with their controllers) to a single API.
 type Handler struct {
@@ -39,7 +54,9 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 		}
 		basePath := []string{"/", alias, controllerPath}
 		// list of available methods for current resource (required for OPTIONS request)
-		var allowedMethods = make(map[string]struct{})
+		var allowedSingle = &methods{}
+		var allowedPlural = &methods{}
+
 		// [GET] plural
 		if controller, ok := resource.(PluralGetter); ok {
 			h.Router.Handle(
@@ -51,8 +68,8 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 					// set final handler
 					Then(getPlural(controller)),
 			).Methods(http.MethodGet)
-			// add GET method to OPTIONS list
-			allowedMethods[http.MethodGet] = struct{}{}
+			// add bulk GET request to OPTIONS list
+			allowedPlural.add(http.MethodGet)
 
 			log.Printf("[GET] %s\n", path.Join(basePath...))
 		}
@@ -67,8 +84,8 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 					// set final handler
 					Then(getSingle(controller)),
 			).Methods(http.MethodGet)
-			// add GET method to OPTIONS list
-			allowedMethods[http.MethodGet] = struct{}{}
+			// add single GET request to OPTIONS list
+			allowedSingle.add(http.MethodGet)
 
 			log.Printf("[GET] %s\n", path.Join(append(basePath, "{pk}")...))
 		}
@@ -83,8 +100,8 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 					// set final handler
 					Then(postPlural(controller)),
 			).Methods(http.MethodPost)
-			// add POST method to OPTIONS list
-			allowedMethods[http.MethodPost] = struct{}{}
+			// add bulk POST request to OPTIONS list
+			allowedPlural.add(http.MethodPost)
 
 			log.Printf("[POST] %s\n", path.Join(basePath...))
 		}
@@ -99,8 +116,8 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 					// set final handler
 					Then(postSingle(controller)),
 			).Methods(http.MethodPost)
-			// add POST method to OPTIONS list
-			allowedMethods[http.MethodPost] = struct{}{}
+			// add single POST request to OPTIONS list
+			allowedSingle.add(http.MethodPost)
 
 			log.Printf("[POST] %s\n", path.Join(append(basePath, "{pk}")...))
 		}
@@ -115,8 +132,8 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 					// set final handler
 					Then(patchPlural(controller)),
 			).Methods(http.MethodPatch)
-			// add PATCH method to OPTIONS list
-			allowedMethods[http.MethodPatch] = struct{}{}
+			// add bulk PATCH request to OPTIONS list
+			allowedPlural.add(http.MethodPatch)
 
 			log.Printf("[PATCH] %s\n", path.Join(basePath...))
 		}
@@ -131,8 +148,8 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 					// set final handler
 					Then(patchSingle(controller)),
 			).Methods(http.MethodPatch)
-			// add POST method to OPTIONS list
-			allowedMethods[http.MethodPatch] = struct{}{}
+			// add single PATCH request to OPTIONS list
+			allowedSingle.add(http.MethodPatch)
 
 			log.Printf("[PATCH] %s\n", path.Join(append(basePath, "{pk}")...))
 		}
@@ -147,8 +164,8 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 					// set final handler
 					Then(putPlural(controller)),
 			).Methods(http.MethodPut)
-			// add PATCH method to OPTIONS list
-			allowedMethods[http.MethodPut] = struct{}{}
+			// add bulk PUT request to OPTIONS list
+			allowedPlural.add(http.MethodPut)
 
 			log.Printf("[PUT] %s\n", path.Join(basePath...))
 		}
@@ -163,14 +180,71 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 					// set final handler
 					Then(putSingle(controller)),
 			).Methods(http.MethodPut)
-			// add POST method to OPTIONS list
-			allowedMethods[http.MethodPut] = struct{}{}
+			// add single PUT request to OPTIONS list
+			allowedSingle.add(http.MethodPut)
 
 			log.Printf("[PUT] %s\n", path.Join(append(basePath, "{pk}")...))
 		}
+		// [DELETE] plural
+		if controller, ok := resource.(PluralDeleter); ok {
+			h.Router.Handle(
+				path.Join(basePath...),
+				// apply default middleware
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+					// extract custom (user defined) middleware for HTTP method DELETE
+					Use(controller.Middleware(http.MethodDelete)).
+					// set final handler
+					Then(deletePlural(controller)),
+			).Methods(http.MethodDelete)
+			// add bulk DELETE request to OPTIONS list
+			allowedPlural.add(http.MethodDelete)
 
-		// TODO: implement for the rest of HTTP methods
+			log.Printf("[DELETE] %s\n", path.Join(basePath...))
+		}
+		// [DELETE] single
+		if controller, ok := resource.(SingleDeleter); ok {
+			h.Router.Handle(
+				path.Join(append(basePath, "{pk}")...),
+				// apply default middleware
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+					// extract custom (user defined) middleware for HTTP method DELETE
+					Use(controller.Middleware(http.MethodDelete)).
+					// set final handler
+					Then(deleteSingle(controller)),
+			).Methods(http.MethodDelete)
+			// add single DELETE request to OPTIONS list
+			allowedSingle.add(http.MethodDelete)
 
+			log.Printf("[DELETE] %s\n", path.Join(append(basePath, "{pk}")...))
+		}
+		// [OPTIONS] bulk
+		if !allowedPlural.empty() {
+			h.Router.Handle(
+				path.Join(basePath...),
+				// apply default middleware
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), GorillaParams).
+					// extract custom (user defined) middleware for HTTP method OPTIONS
+					Use(resource.Middleware(http.MethodDelete)).
+					// set final handler
+					Then(options(allowedPlural)),
+			).Methods(http.MethodOptions)
+
+			log.Printf("[OPTIONS] %s\n", path.Join(basePath...))
+		}
+		// [OPTIONS] single
+		if !allowedSingle.empty() {
+			h.Router.Handle(
+				path.Join(append(basePath, "{pk}")...),
+				// apply default middleware
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), GorillaParams).
+					// extract custom (user defined) middleware for HTTP method OPTIONS
+					Use(resource.Middleware(http.MethodDelete)).
+					// set final handler
+					Then(options(allowedSingle)),
+			).Methods(http.MethodOptions)
+
+			log.Printf("[OPTIONS] %s\n", path.Join(append(basePath, "{pk}")...))
+		}
 		return true
 	})
 	// store alias and module to local registry in order to avoid duplicates

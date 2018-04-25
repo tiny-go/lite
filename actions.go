@@ -2,7 +2,6 @@ package static
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/tiny-go/middleware"
 
@@ -10,9 +9,9 @@ import (
 )
 
 // options is responsible for handling OPTIONS request.
-func options(methods []string) http.HandlerFunc {
+func options(methods *methods) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
+		w.Header().Set("Access-Control-Allow-Methods", methods.join())
 	}
 }
 
