@@ -3,34 +3,34 @@ package static
 import (
 	"fmt"
 	"sync"
-
-	"github.com/Alma-media/restful"
 )
 
+// Module represents single module with static API (it means that all its routes
+// can be generated only once at startup).
 type Module interface {
 	// Register should add Controller to module resources.
-	Register(string, restful.Controller) error
+	Register(string, Controller) error
 	// Unregister should remove the Controller from module resources.
 	Unregister(alias string) error
 	// Controllers should call the provided func sequentially for each available
 	// resource. If func returns false the "for" loop should be interrupted.
-	Controllers(func(alias string, controller restful.Controller) bool)
+	Controllers(func(alias string, controller Controller) bool)
 }
 
 // BaseModule contains a basic set of logic and provides basic operations on
 // resources (like "Register", "Unregister" etc).
 type BaseModule struct {
 	sync.RWMutex
-	resources map[string]restful.Controller
+	resources map[string]Controller
 }
 
 // NewBaseModule is a constructor func for BaseModule.
 func NewBaseModule() *BaseModule {
-	return &BaseModule{resources: make(map[string]restful.Controller)}
+	return &BaseModule{resources: make(map[string]Controller)}
 }
 
 // Register makes resource available by provided alias.
-func (m *BaseModule) Register(name string, resource restful.Controller) error {
+func (m *BaseModule) Register(name string, resource Controller) error {
 	m.Lock()
 	defer m.Unlock()
 
@@ -55,7 +55,7 @@ func (m *BaseModule) Unregister(name string) error {
 
 // Controllers calls the provided func sequentially for each available resource.
 // If func returns false the "for" loop will be stopped.
-func (m *BaseModule) Controllers(f func(string, restful.Controller) bool) {
+func (m *BaseModule) Controllers(f func(string, Controller) bool) {
 	m.Lock()
 	defer m.Unlock()
 

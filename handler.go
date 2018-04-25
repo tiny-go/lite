@@ -1,11 +1,121 @@
-package restful
+package static
 
-import "net/http"
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"path"
 
-// Handler describes a single application module.
-type Handler interface {
-	http.Handler
-	// Init should initialize a handler buildig routes for all registered modules.
-	// Call this func before building routes for your application .
-	Init() error
+	"github.com/gorilla/mux"
+	"github.com/tiny-go/codec/driver"
+	"github.com/tiny-go/errors"
+	"github.com/tiny-go/middleware"
+)
+
+// Handler combines all static modules (with their controllers) to a single API.
+type Handler struct {
+	*mux.Router
+	// it is strongly required to keep the order of modules as it was defined
+	// since it can influence the priorities of application routing
+	aliases []string
+	modules []Module
+}
+
+func NewHandler() *Handler {
+	return &Handler{Router: mux.NewRouter()}
+}
+
+// Use registers the module with provided alias and returns
+func (h *Handler) Use(alias string, module Module) error {
+	for i := 0; i < len(h.aliases); i++ {
+		if h.aliases[i] == alias || h.modules[i] == module {
+			return fmt.Errorf("alias/module already in use %q", alias)
+		}
+	}
+	h.aliases = append(h.aliases, alias)
+	h.modules = append(h.modules, module)
+	return nil
+}
+
+// TODO: subroutes, use internal mux serve HTTP, register API on top level
+
+// Init static Module. TODO: use ServeHTTP and hide router
+func (h *Handler) Init() error {
+	mux := h.Router
+	// build routes for registered controllers
+	for index, modulePath := range h.aliases {
+		h.modules[index].Controllers(func(controllerPath string, resource Controller) bool {
+			basePath := []string{"/", modulePath, controllerPath}
+			// list of available methods for current resource (required for OPTIONS request)
+			var allowedMethods = make(map[string]struct{})
+			// [GET] plural
+			if controller, ok := resource.(PluralGetter); ok {
+				mux.Handle(
+					path.Join(basePath...),
+					// apply default middleware (no need to close the body with mw.BodyClose)
+					mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), GorillaParams).
+						// extract custom (user defined) middleware for HTTP method GET
+						Use(controller.Middleware(http.MethodGet)).
+						// set final handler
+						Then(getPlural(controller)),
+				).Methods(http.MethodGet)
+				// add GET method to OPTIONS list
+				allowedMethods[http.MethodGet] = struct{}{}
+
+				log.Printf("[GET] %s\n", path.Join(basePath...))
+			}
+			// [GET] single
+			if controller, ok := resource.(SingleGetter); ok {
+				mux.Handle(
+					path.Join(append(basePath, "{pk}")...),
+					// apply default middleware (no need to close the body with mw.BodyClose)
+					mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), GorillaParams).
+						// extract custom (user defined) middleware for HTTP method GET
+						Use(controller.Middleware(http.MethodGet)).
+						// set final handler
+						Then(getSingle(controller)),
+				).Methods(http.MethodGet)
+				// add GET method to OPTIONS list
+				allowedMethods[http.MethodGet] = struct{}{}
+
+				log.Printf("[GET] %s\n", path.Join(append(basePath, "{pk}")...))
+			}
+			// [POST] plural
+			if controller, ok := resource.(PluralPoster); ok {
+				mux.Handle(
+					path.Join(basePath...),
+					// apply default middleware
+					mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+						// extract custom (user defined) middleware for HTTP method POST
+						Use(controller.Middleware(http.MethodPost)).
+						// set final handler
+						Then(postPlural(controller)),
+				).Methods(http.MethodPost)
+				// add POST method to OPTIONS list
+				allowedMethods[http.MethodPost] = struct{}{}
+
+				log.Printf("[POST] %s\n", path.Join(basePath...))
+			}
+			// [POST] single
+			if controller, ok := resource.(SinglePoster); ok {
+				mux.Handle(
+					path.Join(append(basePath, "{pk}")...),
+					// apply default middleware
+					mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+						// extract custom (user defined) middleware for HTTP method POST
+						Use(controller.Middleware(http.MethodPost)).
+						// set final handler
+						Then(postSingle(controller)),
+				).Methods(http.MethodPost)
+				// add POST method to OPTIONS list
+				allowedMethods[http.MethodPost] = struct{}{}
+
+				log.Printf("[POST] %s\n", path.Join(append(basePath, "{pk}")...))
+			}
+			// TODO: implement for the rest of HTTP methods
+
+			return true
+		})
+	}
+	return nil
 }
