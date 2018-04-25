@@ -1,4 +1,4 @@
-package auth
+package user
 
 // UserModel is a user model.
 type UserModel struct {
