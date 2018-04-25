@@ -7,7 +7,11 @@ import (
 	mw "github.com/tiny-go/middleware"
 )
 
-var _ static.PluralPoster = &Controller{}
+var (
+	// compile-time type check (Controller should implement both interfaces)
+	_ static.PluralPoster  = &Controller{}
+	_ static.PluralPatcher = &Controller{}
+)
 
 // Controller is responsible for user AUTH operations.
 type Controller struct{ *mw.BaseController }
