@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	mw "github.com/Alma-media/restful/middleware"
+	"github.com/tiny-go/middleware"
 
 	"github.com/gorilla/mux"
 )
