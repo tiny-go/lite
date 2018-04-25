@@ -136,6 +136,38 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 
 			log.Printf("[PATCH] %s\n", path.Join(append(basePath, "{pk}")...))
 		}
+		// [PUT] plural
+		if controller, ok := resource.(PluralPutter); ok {
+			h.Router.Handle(
+				path.Join(basePath...),
+				// apply default middleware
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+					// extract custom (user defined) middleware for HTTP method PUT
+					Use(controller.Middleware(http.MethodPut)).
+					// set final handler
+					Then(putPlural(controller)),
+			).Methods(http.MethodPut)
+			// add PATCH method to OPTIONS list
+			allowedMethods[http.MethodPut] = struct{}{}
+
+			log.Printf("[PUT] %s\n", path.Join(basePath...))
+		}
+		// [PUT] single
+		if controller, ok := resource.(SinglePutter); ok {
+			h.Router.Handle(
+				path.Join(append(basePath, "{pk}")...),
+				// apply default middleware
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+					// extract custom (user defined) middleware for HTTP method PUT
+					Use(controller.Middleware(http.MethodPut)).
+					// set final handler
+					Then(putSingle(controller)),
+			).Methods(http.MethodPut)
+			// add POST method to OPTIONS list
+			allowedMethods[http.MethodPut] = struct{}{}
+
+			log.Printf("[PUT] %s\n", path.Join(append(basePath, "{pk}")...))
+		}
 
 		// TODO: implement for the rest of HTTP methods
 

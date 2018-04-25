@@ -57,7 +57,7 @@ func postSingle(controller SinglePoster) http.HandlerFunc {
 	}
 }
 
-// postPlural handles plural POST request on provided resource.
+// postPlural handles bulk POST request on provided resource.
 func postPlural(controller PluralPoster) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
@@ -72,7 +72,7 @@ func postPlural(controller PluralPoster) http.HandlerFunc {
 	}
 }
 
-// patchSingle handles single model PATCH request for provided resource.
+// patchSingle handles single PATCH request on provided resource.
 func patchSingle(controller SinglePatcher) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
@@ -87,7 +87,7 @@ func patchSingle(controller SinglePatcher) http.HandlerFunc {
 	}
 }
 
-// patchPlural handles plural PATCH request for provided resource.
+// patchPlural handles bulk PATCH request on provided resource.
 func patchPlural(controller PluralPatcher) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
@@ -102,7 +102,7 @@ func patchPlural(controller PluralPatcher) http.HandlerFunc {
 	}
 }
 
-// putSingle handles single model PUT request for provided resource.
+// putSingle handles single PUT request on provided resource.
 func putSingle(controller SinglePutter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
@@ -117,7 +117,22 @@ func putSingle(controller SinglePutter) http.HandlerFunc {
 	}
 }
 
-// deleteSingle handles single DELETE model request for provided resource.
+// putPlural handles bulk PUT request for provided resource.
+func putPlural(controller PluralPutter) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// call the controller action
+		data, err := controller.PutAll(r.Context(), func(v interface{}) error {
+			return mw.RequestCodecFromContext(r.Context()).Decoder(r.Body).Decode(v)
+		})
+		if err != nil {
+			panic(err)
+		}
+		// send data to the client
+		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
+	}
+}
+
+// deleteSingle handles single DELETE request on provided resource.
 func deleteSingle(controller SingleDeleter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// delete model by primary key(s) TODO: primary is missing
@@ -130,7 +145,7 @@ func deleteSingle(controller SingleDeleter) http.HandlerFunc {
 	}
 }
 
-// deletePlural handles bulk DELETE request for provided resource.
+// deletePlural handles bulk DELETE request on provided resource.
 func deletePlural(controller PluralDeleter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
