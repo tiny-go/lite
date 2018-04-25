@@ -112,8 +112,3 @@ func (h *Handler) Use(alias string, module Module) error {
 
 	return nil
 }
-
-func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Println("boom!")
-	h.Router.ServeHTTP(w, r)
-}
