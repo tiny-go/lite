@@ -7,6 +7,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/codegangsta/inject"
 	"github.com/gorilla/mux"
 	"github.com/tiny-go/codec/driver"
 	"github.com/tiny-go/errors"
@@ -30,13 +31,18 @@ func (ms *methods) empty() bool {
 // Handler combines all static modules (with their controllers) to a single API.
 type Handler struct {
 	*mux.Router
+
+	inject.Injector
 	// modules is a local registry which is needed for alias/module unique check
 	modules map[string]Module
 }
 
 // NewHandler creates new static handler.
 func NewHandler() *Handler {
-	return &Handler{Router: mux.NewRouter(), modules: make(map[string]Module)}
+	return &Handler{
+		Router:   mux.NewRouter(),
+		Injector: inject.New(),
+		modules:  make(map[string]Module)}
 }
 
 // Use registers the module with provided alias.
@@ -48,6 +54,10 @@ func (h *Handler) Use(alias string, module Module) (err error) {
 	}
 
 	module.Controllers(func(controllerPath string, resource Controller) bool {
+		// inject dependencies to the controllers
+		if err = h.Apply(resource); err != nil {
+			return false
+		}
 		// init current controller first and if failed return false to exit the loop
 		if err = resource.Init(); err != nil {
 			return false
