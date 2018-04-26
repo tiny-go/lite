@@ -3,9 +3,8 @@ package static
 import (
 	"net/http"
 
-	"github.com/tiny-go/middleware"
-
 	"github.com/gorilla/mux"
+	"github.com/tiny-go/middleware"
 )
 
 // options is responsible for handling OPTIONS request.

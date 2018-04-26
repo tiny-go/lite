@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"log"
 
 	"github.com/Alma-media/restful"
 	"github.com/Alma-media/restful/examples/config"
@@ -25,12 +24,7 @@ type Controller struct {
 }
 
 // Init user controller (TODO: add middleware for available methods).
-func (c *Controller) Init() error {
-	// check that config was passed
-	log.Println(c.Config, c.Users)
-
-	return nil
-}
+func (c *Controller) Init() error { return nil }
 
 // PostAll handles user login request.
 func (c *Controller) PostAll(ctx context.Context, cf func(interface{}) error) (interface{}, error) {

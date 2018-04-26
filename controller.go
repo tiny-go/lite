@@ -1,8 +1,6 @@
 package static
 
-import (
-	"github.com/tiny-go/middleware"
-)
+import "github.com/tiny-go/middleware"
 
 // Controller interface is a bare minimal controller.
 type Controller interface {
