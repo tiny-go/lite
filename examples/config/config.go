@@ -1,7 +1,9 @@
 package config
 
+import "time"
+
 // Config values.
 type Config struct {
-	Username string `default:"user"`
-	Password string `default:"pass"`
+	Secret      string        `default:"secret"`
+	TokLifeTime time.Duration `default:"1h50m"`
 }

@@ -17,7 +17,9 @@ var (
 
 // Controller is responsible for user AUTH operations.
 type Controller struct {
+	// inherit BaseController functionality (related to middleware)
 	*mw.BaseController
+	// controller dependencies
 	Config *config.Config    `inject:"t"`
 	Users  map[string]string `inject:"t"`
 }
@@ -36,7 +38,7 @@ func (c *Controller) PostAll(ctx context.Context, cf func(interface{}) error) (i
 	if err := cf(auth); err != nil {
 		return nil, err
 	}
-	return auth, auth.Login(c.Users)
+	return auth, auth.Login(c.Config, c.Users)
 }
 
 // PatchAll handles user token refresh request.
