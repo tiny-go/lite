@@ -1,11 +1,11 @@
-package static
+package lite
 
 import (
 	"fmt"
 	"sync"
 )
 
-// Module represents single module with static API (it means that all its routes
+// Module represents single module with lite API (it means that all its routes
 // can be generated only once at startup).
 type Module interface {
 	// Register should add Controller to module resources.

@@ -3,15 +3,15 @@ package user
 import (
 	"context"
 
-	"github.com/Alma-media/restful"
-	"github.com/Alma-media/restful/examples/config"
+	"github.com/tiny-go/lite"
+	"github.com/tiny-go/lite/example/config"
 	mw "github.com/tiny-go/middleware"
 )
 
 var (
 	// compile-time type check (Controller should implement both interfaces)
-	_ static.PluralPoster  = &Controller{}
-	_ static.PluralPatcher = &Controller{}
+	_ lite.PluralPoster  = &Controller{}
+	_ lite.PluralPatcher = &Controller{}
 )
 
 // Controller is responsible for user AUTH operations.

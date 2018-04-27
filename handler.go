@@ -1,4 +1,4 @@
-package static
+package lite
 
 import (
 	"fmt"
@@ -57,8 +57,8 @@ func (h *handler) Use(alias string, module Module) (err error) {
 		}
 		basePath := []string{"/", alias, controllerPath}
 		// list of available methods for current resource (required for OPTIONS request)
-		var allowedSingle = &methods{}
-		var allowedPlural = &methods{}
+		var allowedSingle = &Methods{}
+		var allowedPlural = &Methods{}
 
 		// [GET] plural
 		if controller, ok := resource.(PluralGetter); ok {
@@ -72,7 +72,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					Then(getPlural(controller)),
 			).Methods(http.MethodGet)
 			// add bulk GET request to OPTIONS list
-			allowedPlural.add(http.MethodGet)
+			allowedPlural.Add(http.MethodGet)
 
 			log.Printf("[GET] %s\n", path.Join(basePath...))
 		}
@@ -88,7 +88,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					Then(getSingle(controller)),
 			).Methods(http.MethodGet)
 			// add single GET request to OPTIONS list
-			allowedSingle.add(http.MethodGet)
+			allowedSingle.Add(http.MethodGet)
 
 			log.Printf("[GET] %s\n", path.Join(append(basePath, "{pk}")...))
 		}
@@ -104,7 +104,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					Then(postPlural(controller)),
 			).Methods(http.MethodPost)
 			// add bulk POST request to OPTIONS list
-			allowedPlural.add(http.MethodPost)
+			allowedPlural.Add(http.MethodPost)
 
 			log.Printf("[POST] %s\n", path.Join(basePath...))
 		}
@@ -120,7 +120,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					Then(postSingle(controller)),
 			).Methods(http.MethodPost)
 			// add single POST request to OPTIONS list
-			allowedSingle.add(http.MethodPost)
+			allowedSingle.Add(http.MethodPost)
 
 			log.Printf("[POST] %s\n", path.Join(append(basePath, "{pk}")...))
 		}
@@ -136,7 +136,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					Then(patchPlural(controller)),
 			).Methods(http.MethodPatch)
 			// add bulk PATCH request to OPTIONS list
-			allowedPlural.add(http.MethodPatch)
+			allowedPlural.Add(http.MethodPatch)
 
 			log.Printf("[PATCH] %s\n", path.Join(basePath...))
 		}
@@ -152,7 +152,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					Then(patchSingle(controller)),
 			).Methods(http.MethodPatch)
 			// add single PATCH request to OPTIONS list
-			allowedSingle.add(http.MethodPatch)
+			allowedSingle.Add(http.MethodPatch)
 
 			log.Printf("[PATCH] %s\n", path.Join(append(basePath, "{pk}")...))
 		}
@@ -168,7 +168,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					Then(putPlural(controller)),
 			).Methods(http.MethodPut)
 			// add bulk PUT request to OPTIONS list
-			allowedPlural.add(http.MethodPut)
+			allowedPlural.Add(http.MethodPut)
 
 			log.Printf("[PUT] %s\n", path.Join(basePath...))
 		}
@@ -184,7 +184,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					Then(putSingle(controller)),
 			).Methods(http.MethodPut)
 			// add single PUT request to OPTIONS list
-			allowedSingle.add(http.MethodPut)
+			allowedSingle.Add(http.MethodPut)
 
 			log.Printf("[PUT] %s\n", path.Join(append(basePath, "{pk}")...))
 		}
@@ -200,7 +200,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					Then(deletePlural(controller)),
 			).Methods(http.MethodDelete)
 			// add bulk DELETE request to OPTIONS list
-			allowedPlural.add(http.MethodDelete)
+			allowedPlural.Add(http.MethodDelete)
 
 			log.Printf("[DELETE] %s\n", path.Join(basePath...))
 		}
@@ -216,12 +216,12 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					Then(deleteSingle(controller)),
 			).Methods(http.MethodDelete)
 			// add single DELETE request to OPTIONS list
-			allowedSingle.add(http.MethodDelete)
+			allowedSingle.Add(http.MethodDelete)
 
 			log.Printf("[DELETE] %s\n", path.Join(append(basePath, "{pk}")...))
 		}
 		// [OPTIONS] bulk
-		if !allowedPlural.empty() {
+		if !allowedPlural.Empty() {
 			h.Router.Handle(
 				path.Join(basePath...),
 				// apply default middleware
@@ -235,7 +235,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			log.Printf("[OPTIONS] %s\n", path.Join(basePath...))
 		}
 		// [OPTIONS] single
-		if !allowedSingle.empty() {
+		if !allowedSingle.Empty() {
 			h.Router.Handle(
 				path.Join(append(basePath, "{pk}")...),
 				// apply default middleware

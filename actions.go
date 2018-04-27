@@ -1,4 +1,4 @@
-package static
+package lite
 
 import (
 	"net/http"
@@ -8,9 +8,9 @@ import (
 )
 
 // options is responsible for handling OPTIONS request.
-func options(methods *methods) http.HandlerFunc {
+func options(methods *Methods) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Methods", methods.join())
+		w.Header().Set("Access-Control-Allow-Methods", methods.Join())
 	}
 }
 

@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Alma-media/restful/examples/claims"
-	"github.com/Alma-media/restful/examples/config"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/tiny-go/errors"
+	"github.com/tiny-go/lite/example/claims"
+	"github.com/tiny-go/lite/example/config"
 )
 
 // Auth is a user model.

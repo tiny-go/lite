@@ -1,4 +1,4 @@
-package static
+package lite
 
 import "github.com/tiny-go/middleware"
 

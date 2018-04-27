@@ -1,17 +1,15 @@
-package static
+package lite
 
 import "strings"
 
-type methods []string
+// Methods is a collection of HTTP methods.
+type Methods []string
 
-func (ms *methods) add(method string) {
-	*ms = append(*ms, method)
-}
+// Add method to the list of supported actions (ignoring duplicates).
+func (ms *Methods) Add(method string) { *ms = append(*ms, method) }
 
-func (ms *methods) join() string {
-	return strings.Join(*ms, ",")
-}
+// Join converts list of methods/actions to a string (separated by comma).
+func (ms *Methods) Join() string { return strings.Join(*ms, ",") }
 
-func (ms *methods) empty() bool {
-	return len(*ms) == 0
-}
+// Empty returns true if list of methods is empty.
+func (ms *Methods) Empty() bool { return len(*ms) == 0 }
