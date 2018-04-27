@@ -1,2 +1,2 @@
-# restful
-Simple dynamic RESTful API
+# handler
+Simple tool for building RESTful APIs

@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"path"
-	"strings"
 
 	"github.com/codegangsta/inject"
 	"github.com/gorilla/mux"
@@ -14,22 +13,16 @@ import (
 	"github.com/tiny-go/middleware"
 )
 
-type methods []string
-
-func (ms *methods) add(method string) {
-	*ms = append(*ms, method)
+// Handler interface describes HTTP API handler.
+type Handler interface {
+	http.Handler
+	Use(string, Module) error
+	Map(interface{}) inject.TypeMapper
 }
 
-func (ms *methods) join() string {
-	return strings.Join(*ms, ",")
-}
-
-func (ms *methods) empty() bool {
-	return len(*ms) == 0
-}
-
-// Handler combines all static modules (with their controllers) to a single API.
-type Handler struct {
+// handler combines all registered modules (with their controllers) to a single API.
+type handler struct {
+	// TODO: provide router from outside (maybe replace with interface)
 	*mux.Router
 
 	inject.Injector
@@ -37,16 +30,16 @@ type Handler struct {
 	modules map[string]Module
 }
 
-// NewHandler creates new static handler.
-func NewHandler() *Handler {
-	return &Handler{
+// NewHandler creates new HTTP handler.
+func NewHandler() Handler {
+	return &handler{
 		Router:   mux.NewRouter(),
 		Injector: inject.New(),
 		modules:  make(map[string]Module)}
 }
 
 // Use registers the module with provided alias.
-func (h *Handler) Use(alias string, module Module) (err error) {
+func (h *handler) Use(alias string, module Module) (err error) {
 	for key, value := range h.modules {
 		if key == alias || value == module {
 			return fmt.Errorf("alias/module already in use %q", alias)

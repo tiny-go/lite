@@ -23,7 +23,7 @@ func main() {
 	if err := config.Init(conf, "demo"); err != nil {
 		log.Fatal(err)
 	}
-	// create new static handler
+	// create new handler
 	handler := static.NewHandler()
 	// map config to the handler to make it available for all of the controllers
 	handler.Map(conf)
