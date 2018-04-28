@@ -6,7 +6,14 @@ import "strings"
 type Methods []string
 
 // Add method to the list of supported actions (ignoring duplicates).
-func (ms *Methods) Add(method string) { *ms = append(*ms, method) }
+func (ms *Methods) Add(method string) {
+	for _, curr := range *ms {
+		if curr == method {
+			return
+		}
+	}
+	*ms = append(*ms, method)
+}
 
 // Join converts list of methods/actions to a string (separated by comma).
 func (ms *Methods) Join() string { return strings.Join(*ms, ",") }

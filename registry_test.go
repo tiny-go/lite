@@ -47,15 +47,15 @@ func Test_Modules(t *testing.T) {
 		t.Run("Modules should iterate all registered modules applying provided func", func(t *testing.T) {
 			var out string
 			Modules(func(_ string, m Module) bool { out += m.(*module).name; return true })
-			if out != "ABC" {
-				t.Errorf("out was expected to be \"ABC\" but was %q", out)
+			if len(out) != 3 {
+				t.Errorf("out was expected to contain all (3) elements but had %d", len(out))
 			}
 		})
 		t.Run("Modules should stop iterations if provided func returns false", func(t *testing.T) {
 			var out string
 			Modules(func(_ string, m Module) bool { out += m.(*module).name; return false })
-			if out != "A" {
-				t.Errorf("out was expected to be \"A\" but was %q", out)
+			if len(out) != 1 {
+				t.Errorf("out was expected to contain only one element but had %d", len(out))
 			}
 		})
 	})
