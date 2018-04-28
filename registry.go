@@ -1,6 +1,9 @@
 package lite
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 var (
 	modulesMu sync.RWMutex
@@ -12,6 +15,9 @@ func Register(alias string, module Module) {
 	modulesMu.Lock()
 	defer modulesMu.Unlock()
 
+	if _, ok := modules[alias]; ok {
+		panic(fmt.Sprintf(`alias %q already in use`, alias))
+	}
 	modules[alias] = module
 }
 

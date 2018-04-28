@@ -9,7 +9,7 @@ import (
 // can be generated only once at startup).
 type Module interface {
 	// Register should add Controller to module resources.
-	Register(string, Controller) error
+	Register(alias string, controller Controller) error
 	// Unregister should remove the Controller from module resources.
 	Unregister(alias string) error
 	// Controllers should call the provided func sequentially for each available
