@@ -1,8 +1,6 @@
 package lite
 
-import (
-	"testing"
-)
+import "testing"
 
 func Test_Register(t *testing.T) {
 	t.Run("Given global module registry", func(t *testing.T) {
