@@ -9,7 +9,7 @@ import (
 
 type paramsKey struct{}
 
-// Params is a key/value map containing the request paramters from the URI.
+// Params is a key/value map containing the request parameters from the URI.
 type Params map[string]string
 
 // GorillaParams extracts URI params from the request (when using gorolla/mux).
