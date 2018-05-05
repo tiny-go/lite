@@ -12,7 +12,7 @@ func Test_BaseModule(t *testing.T) {
 		})
 		t.Run("test if controller with unique alias was registered successfully", func(t *testing.T) {
 			if err := module.Register("controller", nil); err != nil {
-				t.Error("the controller should have been registerd successfully")
+				t.Error("the controller should have been registered successfully")
 			}
 			if _, ok := module.resources["controller"]; !ok {
 				t.Error("module should have registered controller")
