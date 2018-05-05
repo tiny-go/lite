@@ -10,7 +10,7 @@ func Test_BaseModule(t *testing.T) {
 				t.Error("the resource map has not been initialized")
 			}
 		})
-		t.Run("test if controller with unique alias was regitered successfully", func(t *testing.T) {
+		t.Run("test if controller with unique alias was registered successfully", func(t *testing.T) {
 			if err := module.Register("controller", nil); err != nil {
 				t.Error("the controller should have been registerd successfully")
 			}
@@ -28,7 +28,7 @@ func Test_BaseModule(t *testing.T) {
 				t.Error("callback function has not been properly applied")
 			}
 		})
-		t.Run("test if module is able to skip the next iteration if callback returns false", func(t *testing.T) {
+		t.Run("test if module skips the rest of controllers if callback returns false", func(t *testing.T) {
 			var called int
 			module.Register("another-controller", nil)
 			module.Controllers(func(string, Controller) bool {
