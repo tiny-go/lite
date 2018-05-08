@@ -1,8 +1,6 @@
 package lite
 
 import (
-	"context"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -11,53 +9,8 @@ import (
 	"testing"
 
 	_ "github.com/tiny-go/codec/driver/json"
-	"github.com/tiny-go/middleware"
+	_ "github.com/tiny-go/codec/driver/xml"
 )
-
-type mockController struct {
-	mw.Controller
-	ShouldFail bool
-}
-
-func newPassController() *mockController {
-	return &mockController{mw.NewBaseController(), false}
-}
-
-func newFailController() *mockController {
-	return &mockController{mw.NewBaseController(), true}
-}
-
-func (c *mockController) Init() error { return nil }
-
-func (c *mockController) Get(_ context.Context, pk string) (interface{}, error) {
-	if c.ShouldFail {
-		return nil, errors.New("single GET error")
-	}
-	return pk, nil
-}
-
-func (c *mockController) GetAll(context.Context) (interface{}, error) {
-	if c.ShouldFail {
-		return nil, errors.New("plural GET error")
-	}
-	return map[string]interface{}{"foo": "bar"}, nil
-}
-
-func (c *mockController) Post(_ context.Context, pk string, f func(v interface{}) error) (interface{}, error) {
-	if c.ShouldFail {
-		return nil, errors.New("single POST error")
-	}
-	data := map[string]interface{}{"pk": pk}
-	return data, f(&data)
-}
-
-func (c *mockController) PostAll(_ context.Context, f func(v interface{}) error) (interface{}, error) {
-	if c.ShouldFail {
-		return nil, errors.New("plural POST error")
-	}
-	data := make(map[string]interface{})
-	return data, f(&data)
-}
 
 func Test_Handler(t *testing.T) {
 	t.Run("Given an HTTP handler with registered module", func(t *testing.T) {
@@ -83,7 +36,7 @@ func Test_Handler(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodOptions, ts.URL+"/test/pass", nil)
 					return r
 				}(),
-				header: http.Header{"Access-Control-Allow-Methods": []string{"GET,POST"}},
+				header: http.Header{"Access-Control-Allow-Methods": []string{"GET,POST,PATCH,PUT,DELETE"}},
 				code:   http.StatusOK,
 			},
 			{
@@ -92,7 +45,7 @@ func Test_Handler(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodOptions, ts.URL+"/test/pass/abcd", nil)
 					return r
 				}(),
-				header: http.Header{"Access-Control-Allow-Methods": []string{"GET,POST"}},
+				header: http.Header{"Access-Control-Allow-Methods": []string{"GET,POST,PATCH,PUT,DELETE"}},
 				code:   http.StatusOK,
 			},
 			{
@@ -138,6 +91,72 @@ func Test_Handler(t *testing.T) {
 				}(),
 				code: http.StatusOK,
 				body: "{\"foo\":\"bar\",\"pk\":\"abcd\"}\n",
+			},
+			{
+				title: "plural PATCH with success",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPatch, ts.URL+"/test/pass", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusOK,
+				body: "{\"foo\":\"bar\"}\n",
+			},
+			{
+				title: "single PATCH with success",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPatch, ts.URL+"/test/pass/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusOK,
+				body: "{\"foo\":\"bar\",\"pk\":\"abcd\"}\n",
+			},
+			{
+				title: "plural PUT with success",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPut, ts.URL+"/test/pass", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusOK,
+				body: "{\"foo\":\"bar\"}\n",
+			},
+			{
+				title: "single PUT with success",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPut, ts.URL+"/test/pass/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusOK,
+				body: "{\"foo\":\"bar\",\"pk\":\"abcd\"}\n",
+			},
+			{
+				title: "plural DELETE with success",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodDelete, ts.URL+"/test/pass", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusOK,
+				body: "{\"foo\":\"bar\"}\n",
+			},
+			{
+				title: "single DELETE with success",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodDelete, ts.URL+"/test/pass/abcd", nil)
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusOK,
+				body: "\"abcd\"\n",
 			},
 		}
 

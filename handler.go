@@ -18,6 +18,8 @@ type Handler interface {
 	http.Handler
 	Use(string, Module) error
 	Map(interface{}) inject.TypeMapper
+	// TODO: allow registering custom routes
+	// HandleFunc(string, http.HandlerFunc)
 }
 
 // handler combines all registered modules (with their controllers) to a single API.
@@ -225,7 +227,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(basePath...),
 				// apply default middleware
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), GorillaParams).
 					// extract custom (user defined) middleware for HTTP method OPTIONS
 					Use(resource.Middleware(http.MethodDelete)).
 					// set final handler
@@ -239,7 +241,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(append(basePath, "{pk}")...),
 				// apply default middleware
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), GorillaParams).
 					// extract custom (user defined) middleware for HTTP method OPTIONS
 					Use(resource.Middleware(http.MethodDelete)).
 					// set final handler
