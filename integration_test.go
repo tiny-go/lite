@@ -60,6 +60,17 @@ func Test_Handler(t *testing.T) {
 				body: "{\"foo\":\"bar\"}\n",
 			},
 			{
+				title: "plural GET with failure",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodGet, ts.URL+"/test/fail", nil)
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusInternalServerError,
+				body: "plural GET error\n",
+			},
+			{
 				title: "single GET with success",
 				request: func() *http.Request {
 					r, _ := http.NewRequest(http.MethodGet, ts.URL+"/test/pass/abcd", nil)
@@ -69,6 +80,17 @@ func Test_Handler(t *testing.T) {
 				}(),
 				code: http.StatusOK,
 				body: "\"abcd\"\n",
+			},
+			{
+				title: "single GET with failure",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodGet, ts.URL+"/test/fail/abcd", nil)
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusInternalServerError,
+				body: "single GET error\n",
 			},
 			{
 				title: "plural POST with success",
@@ -82,6 +104,17 @@ func Test_Handler(t *testing.T) {
 				body: "{\"foo\":\"bar\"}\n",
 			},
 			{
+				title: "plural POST with failure",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPost, ts.URL+"/test/fail", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusInternalServerError,
+				body: "plural POST error\n",
+			},
+			{
 				title: "single POST with success",
 				request: func() *http.Request {
 					r, _ := http.NewRequest(http.MethodPost, ts.URL+"/test/pass/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
@@ -91,6 +124,17 @@ func Test_Handler(t *testing.T) {
 				}(),
 				code: http.StatusOK,
 				body: "{\"foo\":\"bar\",\"pk\":\"abcd\"}\n",
+			},
+			{
+				title: "single POST with failure",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPost, ts.URL+"/test/fail/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusInternalServerError,
+				body: "single POST error\n",
 			},
 			{
 				title: "plural PATCH with success",
@@ -104,6 +148,17 @@ func Test_Handler(t *testing.T) {
 				body: "{\"foo\":\"bar\"}\n",
 			},
 			{
+				title: "plural PATCH with failure",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPatch, ts.URL+"/test/fail", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusInternalServerError,
+				body: "plural PATCH error\n",
+			},
+			{
 				title: "single PATCH with success",
 				request: func() *http.Request {
 					r, _ := http.NewRequest(http.MethodPatch, ts.URL+"/test/pass/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
@@ -113,6 +168,17 @@ func Test_Handler(t *testing.T) {
 				}(),
 				code: http.StatusOK,
 				body: "{\"foo\":\"bar\",\"pk\":\"abcd\"}\n",
+			},
+			{
+				title: "single PATCH with failure",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPatch, ts.URL+"/test/fail/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusInternalServerError,
+				body: "single PATCH error\n",
 			},
 			{
 				title: "plural PUT with success",
@@ -126,6 +192,28 @@ func Test_Handler(t *testing.T) {
 				body: "{\"foo\":\"bar\"}\n",
 			},
 			{
+				title: "plural PUT with success",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPut, ts.URL+"/test/pass", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusOK,
+				body: "{\"foo\":\"bar\"}\n",
+			},
+			{
+				title: "plural PUT with failure",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPut, ts.URL+"/test/fail", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusInternalServerError,
+				body: "plural PUT error\n",
+			},
+			{
 				title: "single PUT with success",
 				request: func() *http.Request {
 					r, _ := http.NewRequest(http.MethodPut, ts.URL+"/test/pass/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
@@ -135,6 +223,17 @@ func Test_Handler(t *testing.T) {
 				}(),
 				code: http.StatusOK,
 				body: "{\"foo\":\"bar\",\"pk\":\"abcd\"}\n",
+			},
+			{
+				title: "single PUT with failure",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodPut, ts.URL+"/test/fail/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusInternalServerError,
+				body: "single PUT error\n",
 			},
 			{
 				title: "plural DELETE with success",
@@ -148,6 +247,17 @@ func Test_Handler(t *testing.T) {
 				body: "{\"foo\":\"bar\"}\n",
 			},
 			{
+				title: "plural DELETE with failure",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodDelete, ts.URL+"/test/fail", strings.NewReader("{\"foo\":\"bar\"}"))
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusInternalServerError,
+				body: "plural DELETE error\n",
+			},
+			{
 				title: "single DELETE with success",
 				request: func() *http.Request {
 					r, _ := http.NewRequest(http.MethodDelete, ts.URL+"/test/pass/abcd", nil)
@@ -157,6 +267,17 @@ func Test_Handler(t *testing.T) {
 				}(),
 				code: http.StatusOK,
 				body: "\"abcd\"\n",
+			},
+			{
+				title: "single DELETE with failure",
+				request: func() *http.Request {
+					r, _ := http.NewRequest(http.MethodDelete, ts.URL+"/test/fail/abcd", nil)
+					r.Header.Set("Content-Type", "application/json")
+					r.Header.Set("Accept", "application/json")
+					return r
+				}(),
+				code: http.StatusInternalServerError,
+				body: "single DELETE error\n",
 			},
 		}
 
