@@ -13,9 +13,12 @@ Simple tool for building RESTful APIs
 package main
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/tiny-go/lite"
 	// register codecs
-  "github.com/tiny-go/codec/driver"
+	"github.com/tiny-go/codec/driver"
 	_ "github.com/tiny-go/codec/driver/json"
 	_ "github.com/tiny-go/codec/driver/xml"
 )
@@ -27,11 +30,11 @@ func main() {
 	handler := lite.NewHandler()
 	// map dependencies
 	handler.Map(depA)
-  handler.Map(depB)
-  handler.Map(depC)
+	handler.Map(depB)
+	handler.Map(depC)
 	// register modules
-  handler.Use(aliasOne, moduleA)
-  handler.Use(aliasTwo, moduleB)
+	handler.Use(aliasOne, moduleA)
+	handler.Use(aliasTwo, moduleB)
 	// start HTTP server
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }
