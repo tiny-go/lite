@@ -42,9 +42,9 @@ func NewHandler() Handler {
 
 // Use registers the module with provided alias.
 func (h *handler) Use(alias string, module Module) (err error) {
-	for key, value := range h.modules {
-		if key == alias || value == module {
-			return fmt.Errorf("alias/module already in use %q", alias)
+	for key := range h.modules {
+		if key == alias {
+			return fmt.Errorf("alias already in use %q", alias)
 		}
 	}
 

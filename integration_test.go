@@ -12,7 +12,7 @@ import (
 	_ "github.com/tiny-go/codec/driver/json"
 )
 
-func Test_Handler(t *testing.T) {
+func Test_All(t *testing.T) {
 	t.Run("Given an HTTP handler with registered module", func(t *testing.T) {
 		driver.Default("application/json")
 		module := NewBaseModule()
