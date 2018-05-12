@@ -8,6 +8,36 @@
 
 Simple tool for building RESTful APIs
 
+### Usage
+```go
+package main
+
+import (
+	"github.com/tiny-go/lite"
+	// register codecs
+  "github.com/tiny-go/codec/driver"
+	_ "github.com/tiny-go/codec/driver/json"
+	_ "github.com/tiny-go/codec/driver/xml"
+)
+
+func main() {
+	// set default codec
+	driver.Default("application/json")
+	// create new handler
+	handler := lite.NewHandler()
+	// map dependencies
+	handler.Map(depA)
+  handler.Map(depB)
+  handler.Map(depC)
+	// register modules
+  handler.Use(aliasOne, moduleA)
+  handler.Use(aliasTwo, moduleB)
+	// start HTTP server
+	log.Fatal(http.ListenAndServe(":8080", handler))
+}
+```
+
+
 [godoc-badge]: https://godoc.org/github.com/tiny-go/lite?status.svg
 [godoc-link]: https://godoc.org/github.com/tiny-go/lite
 [license-badge]: https://img.shields.io/:license-MIT-green.svg
