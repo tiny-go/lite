@@ -8,6 +8,17 @@
 
 Simple tool for building RESTful APIs
 
+### Installation
+```bash
+go get -u github.com/tiny-go/lite
+```
+
+### Modules
+You can use `BaseModule` that provides basic module functionality (such as register/unregister/list) or write your own implementation. `BaseModule` already contains `Register`, `Unregister` and `Controllers` methods and implements `Module` interface.
+
+### Controllers
+Any golang `func`, `struct` or custom type can be used as a controller provided that it implements `Controller` interface and has some action methods, such as `Get`/`GetAll`/`Post`/`PostAll`/... (check the entire list in `interfaces.go`).
+
 ### Usage
 ```go
 package main
@@ -39,7 +50,6 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }
 ```
-
 
 [godoc-badge]: https://godoc.org/github.com/tiny-go/lite?status.svg
 [godoc-link]: https://godoc.org/github.com/tiny-go/lite
