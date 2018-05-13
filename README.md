@@ -20,7 +20,7 @@ You can use `BaseModule` that provides basic module functionality (such as regis
 Any golang `func`, `struct` or custom type can be used as a controller provided that it implements `Controller` interface and has some action methods, such as `Get`/`GetAll`/`Post`/`PostAll`/... (check the entire list in `interfaces.go`).
 
 ### Dependencies
-If you need to pass some dependencies (like config, database connection etc) to your module/controller use `handler.Map(dep)`, it will be passed to the module/controller (use struct tag ``inject:"true"`` in front of the struct faileds that should be injected). Take a look at `example` folder for more information (for instance `example/auth/user/controller.go`).
+If you need to pass some dependencies (like config, database connection etc) to your module/controller use `handler.Map(dep)`, it will be passed to the module/controller (use struct tag ``inject:"true"`` in front of the struct fields that should be injected). Take a look at `example` folder for more information (for instance `example/auth/user/controller.go`).
 
 ### Usage
 ```go
