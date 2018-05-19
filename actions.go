@@ -3,7 +3,6 @@ package lite
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/tiny-go/middleware"
 )
 
@@ -18,7 +17,7 @@ func options(methods *Methods) http.HandlerFunc {
 func getSingle(controller SingleGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
-		data, err := controller.Get(r.Context(), mux.Vars(r)["pk"])
+		data, err := controller.Get(r.Context(), ParamsFromContext(r.Context())["pk"])
 		if err != nil {
 			panic(err)
 		}
@@ -44,7 +43,7 @@ func getPlural(controller PluralGetter) http.HandlerFunc {
 func postSingle(controller SinglePoster) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
-		data, err := controller.Post(r.Context(), mux.Vars(r)["pk"], func(v interface{}) error {
+		data, err := controller.Post(r.Context(), ParamsFromContext(r.Context())["pk"], func(v interface{}) error {
 			return mw.RequestCodecFromContext(r.Context()).Decoder(r.Body).Decode(v)
 		})
 		if err != nil {
@@ -74,7 +73,7 @@ func postPlural(controller PluralPoster) http.HandlerFunc {
 func patchSingle(controller SinglePatcher) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
-		data, err := controller.Patch(r.Context(), mux.Vars(r)["pk"], func(v interface{}) error {
+		data, err := controller.Patch(r.Context(), ParamsFromContext(r.Context())["pk"], func(v interface{}) error {
 			return mw.RequestCodecFromContext(r.Context()).Decoder(r.Body).Decode(v)
 		})
 		if err != nil {
@@ -104,7 +103,7 @@ func patchPlural(controller PluralPatcher) http.HandlerFunc {
 func putSingle(controller SinglePutter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
-		data, err := controller.Put(r.Context(), mux.Vars(r)["pk"], func(v interface{}) error {
+		data, err := controller.Put(r.Context(), ParamsFromContext(r.Context())["pk"], func(v interface{}) error {
 			return mw.RequestCodecFromContext(r.Context()).Decoder(r.Body).Decode(v)
 		})
 		if err != nil {
@@ -134,7 +133,7 @@ func putPlural(controller PluralPutter) http.HandlerFunc {
 func deleteSingle(controller SingleDeleter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// delete model by primary key(s) TODO: primary is missing
-		data, err := controller.Delete(r.Context(), mux.Vars(r)["pk"])
+		data, err := controller.Delete(r.Context(), ParamsFromContext(r.Context())["pk"])
 		if err != nil {
 			panic(err)
 		}
