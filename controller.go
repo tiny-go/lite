@@ -6,6 +6,4 @@ import "github.com/tiny-go/middleware"
 type Controller interface {
 	mw.Controller
 	Init() error
-
-	// TODO: Use() - add MW for all methods with the highest priority
 }

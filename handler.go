@@ -24,9 +24,7 @@ type Handler interface {
 
 // handler combines all registered modules (with their controllers) to a single API.
 type handler struct {
-	// TODO: provide router from outside (maybe replace with interface)
 	*mux.Router
-
 	inject.Injector
 	// modules is a local registry which is needed for alias/module unique check
 	modules map[string]Module
