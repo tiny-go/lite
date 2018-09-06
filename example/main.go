@@ -9,6 +9,7 @@ import (
 	"github.com/tiny-go/lite"
 	local "github.com/tiny-go/lite/example/config"
 	// register auth module
+	"github.com/tiny-go/lite/default/static"
 	_ "github.com/tiny-go/lite/example/auth"
 	// register codecs
 	_ "github.com/tiny-go/codec/driver/json"
@@ -16,6 +17,9 @@ import (
 )
 
 func main() {
+	assets := static.NewModule("/home/alma")
+	lite.Register("file", assets)
+
 	// set JSON codec as a default
 	driver.Default("application/json")
 	// load config
@@ -38,5 +42,5 @@ func main() {
 		return true
 	})
 	// start HTTP server
-	log.Fatal(http.ListenAndServe(":8080", handler))
+	log.Fatal(http.ListenAndServe(":8000", handler))
 }

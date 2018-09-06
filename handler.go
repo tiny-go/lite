@@ -60,6 +60,23 @@ func (h *handler) Use(alias string, module Module) (err error) {
 		var allowedSingle = &Methods{}
 		var allowedPlural = &Methods{}
 
+		// [GET] classic
+		if controller, ok := resource.(ClassicGetter); ok {
+			h.Router.Handle(
+				path.Join(append(basePath, "{path:.*}")...),
+				// apply default middleware (no need to close the body with mw.BodyClose)
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), GorillaParams).
+					// extract custom (user defined) middleware for HTTP method GET
+					Use(controller.Middleware(http.MethodGet)).
+					// set final handler
+					Then(http.HandlerFunc(controller.Get)),
+			).Methods(http.MethodGet)
+			// add bulk GET request to OPTIONS list
+			allowedPlural.Add(http.MethodGet)
+
+			log.Printf("[GET] %s\n", path.Join(append(basePath, "{path:.*}")...))
+		}
+
 		// [GET] plural
 		if controller, ok := resource.(PluralGetter); ok {
 			h.Router.Handle(

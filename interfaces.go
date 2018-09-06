@@ -1,6 +1,15 @@
 package lite
 
-import "context"
+import (
+	"context"
+	"net/http"
+)
+
+// ClassicGetter uses classic http.HandlerFunc.
+type ClassicGetter interface {
+	Controller
+	Get(w http.ResponseWriter, r *http.Request)
+}
 
 // SingleGetter should be able to provide a single model by primary key(s)
 type SingleGetter interface {
