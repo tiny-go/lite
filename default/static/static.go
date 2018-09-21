@@ -7,6 +7,7 @@ import (
 	"path"
 	"time"
 
+	"github.com/tiny-go/errors"
 	"github.com/tiny-go/lite"
 	mw "github.com/tiny-go/middleware"
 )
@@ -27,17 +28,36 @@ func NewModule(assetDir string) lite.Module {
 	return module
 }
 
-// Get is a classic http.HandlerFunc for GET requests.
+// Get returns file content.
 func (c *FileController) Get(w http.ResponseWriter, r *http.Request) {
 	target, ok := lite.ParamsFromContext(r.Context())["path"]
 	if !ok {
-		http.Error(w, "file path has not been provided", http.StatusBadRequest)
-		return
+		panic(errors.NewBadRequest(fmt.Errorf("file path has not been provided")))
+	}
+	info, err := os.Stat(path.Join(c.assetsDir, target))
+	if err != nil {
+		panic(errors.NewNotFound(fmt.Errorf("file %q not found", target)))
+	}
+	if info.IsDir() {
+		panic(errors.NewForbidden(fmt.Errorf("access to directory is not allowed")))
 	}
 	file, err := os.Open(path.Join(c.assetsDir, target))
 	if err != nil {
-		http.Error(w, fmt.Sprintf("file %q not found", target), http.StatusNotFound)
-		return
+		panic(err)
+	}
+	defer file.Close()
+	http.ServeContent(w, r, target, time.Now(), file)
+}
+
+// Post uploads file.
+func (c *FileController) Post(w http.ResponseWriter, r *http.Request) {
+	target, ok := lite.ParamsFromContext(r.Context())["path"]
+	if !ok {
+		panic(errors.NewBadRequest(fmt.Errorf("file path has not been provided")))
+	}
+	file, err := os.Open(path.Join(c.assetsDir, target))
+	if err != nil {
+		panic(errors.NewNotFound(fmt.Errorf("file %q not found", target)))
 	}
 	defer file.Close()
 	http.ServeContent(w, r, target, time.Now(), file)
