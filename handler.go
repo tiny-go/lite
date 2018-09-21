@@ -71,12 +71,11 @@ func (h *handler) Use(alias string, module Module) (err error) {
 					// set final handler
 					Then(http.HandlerFunc(controller.Get)),
 			).Methods(http.MethodGet)
-			// add bulk GET request to OPTIONS list
+			// add classic GET request to OPTIONS list
 			allowedPlural.Add(http.MethodGet)
 
 			log.Printf("[GET] %s\n", path.Join(append(basePath, "{path:.*}")...))
 		}
-
 		// [GET] plural
 		if controller, ok := resource.(PluralGetter); ok {
 			h.Router.Handle(
@@ -108,6 +107,22 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			allowedSingle.Add(http.MethodGet)
 
 			log.Printf("[GET] %s\n", path.Join(append(basePath, "{pk}")...))
+		}
+		// [POST] classic
+		if controller, ok := resource.(ClassicPoster); ok {
+			h.Router.Handle(
+				path.Join(append(basePath, "{path:.*}")...),
+				// apply default middleware
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+					// extract custom (user defined) middleware for HTTP method GET
+					Use(controller.Middleware(http.MethodPost)).
+					// set final handler
+					Then(http.HandlerFunc(controller.Post)),
+			).Methods(http.MethodPost)
+			// add classic POST request to OPTIONS list
+			allowedPlural.Add(http.MethodPost)
+
+			log.Printf("[POST] %s\n", path.Join(append(basePath, "{path:.*}")...))
 		}
 		// [POST] plural
 		if controller, ok := resource.(PluralPoster); ok {

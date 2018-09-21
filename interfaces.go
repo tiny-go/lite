@@ -29,6 +29,12 @@ type SinglePoster interface {
 	Post(ctx context.Context, pk string, f func(v interface{}) error) (interface{}, error)
 }
 
+// ClassicPoster uses classic http.HandlerFunc.
+type ClassicPoster interface {
+	Controller
+	Post(w http.ResponseWriter, r *http.Request)
+}
+
 // PluralPoster should be able to store a list of model to the storage.
 type PluralPoster interface {
 	Controller
