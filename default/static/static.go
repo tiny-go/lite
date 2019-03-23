@@ -19,6 +19,7 @@ type FileController struct {
 }
 
 // NewModule creates a new handler for static content.
+// TODO: add an extra parameter "mode" (for example 755) and maybe "group"
 func NewModule(assetDir string) lite.Module {
 	module := lite.NewBaseModule()
 	module.Register("", &FileController{
@@ -55,10 +56,7 @@ func (c *FileController) Post(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		panic(errors.NewBadRequest(fmt.Errorf("file path has not been provided")))
 	}
-	file, err := os.Open(path.Join(c.assetsDir, target))
-	if err != nil {
-		panic(errors.NewNotFound(fmt.Errorf("file %q not found", target)))
+	if _, err := os.Stat(path.Join(c.assetsDir, target)); !os.IsNotExist(err) {
+		panic(errors.NewConflict(fmt.Errorf("file %q already exists", target)))
 	}
-	defer file.Close()
-	http.ServeContent(w, r, target, time.Now(), file)
 }
