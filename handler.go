@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/tiny-go/codec/driver"
 	"github.com/tiny-go/errors"
-	"github.com/tiny-go/middleware"
+	mw "github.com/tiny-go/middleware"
 )
 
 // Handler interface describes HTTP API handler.
@@ -227,7 +227,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 				// apply default middleware
 				mw.New(mw.PanicRecover(errors.Send), GorillaParams).
 					// extract custom (user defined) middleware for HTTP method OPTIONS
-					Use(resource.Middleware(http.MethodDelete)).
+					Use(resource.Middleware(http.MethodOptions)).
 					// set final handler
 					Then(options(allowedPlural)),
 			).Methods(http.MethodOptions)
@@ -241,7 +241,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 				// apply default middleware
 				mw.New(mw.PanicRecover(errors.Send), GorillaParams).
 					// extract custom (user defined) middleware for HTTP method OPTIONS
-					Use(resource.Middleware(http.MethodDelete)).
+					Use(resource.Middleware(http.MethodOptions)).
 					// set final handler
 					Then(options(allowedSingle)),
 			).Methods(http.MethodOptions)

@@ -64,7 +64,7 @@ func Test_All(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodGet, ts.URL+"/test/fail", nil)
 					return r
 				}(),
-				code: http.StatusInternalServerError,
+				code: http.StatusBadRequest,
 				body: "plural GET error\n",
 			},
 			{
@@ -82,7 +82,7 @@ func Test_All(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodGet, ts.URL+"/test/fail/abcd", nil)
 					return r
 				}(),
-				code: http.StatusInternalServerError,
+				code: http.StatusBadRequest,
 				body: "single GET error\n",
 			},
 			{
@@ -100,7 +100,7 @@ func Test_All(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodPost, ts.URL+"/test/fail", strings.NewReader("{\"foo\":\"bar\"}"))
 					return r
 				}(),
-				code: http.StatusInternalServerError,
+				code: http.StatusBadRequest,
 				body: "plural POST error\n",
 			},
 			{
@@ -118,7 +118,7 @@ func Test_All(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodPost, ts.URL+"/test/fail/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
 					return r
 				}(),
-				code: http.StatusInternalServerError,
+				code: http.StatusBadRequest,
 				body: "single POST error\n",
 			},
 			{
@@ -136,7 +136,7 @@ func Test_All(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodPatch, ts.URL+"/test/fail", strings.NewReader("{\"foo\":\"bar\"}"))
 					return r
 				}(),
-				code: http.StatusInternalServerError,
+				code: http.StatusBadRequest,
 				body: "plural PATCH error\n",
 			},
 			{
@@ -154,7 +154,7 @@ func Test_All(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodPatch, ts.URL+"/test/fail/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
 					return r
 				}(),
-				code: http.StatusInternalServerError,
+				code: http.StatusBadRequest,
 				body: "single PATCH error\n",
 			},
 			{
@@ -181,7 +181,7 @@ func Test_All(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodPut, ts.URL+"/test/fail", strings.NewReader("{\"foo\":\"bar\"}"))
 					return r
 				}(),
-				code: http.StatusInternalServerError,
+				code: http.StatusBadRequest,
 				body: "plural PUT error\n",
 			},
 			{
@@ -199,7 +199,7 @@ func Test_All(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodPut, ts.URL+"/test/fail/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
 					return r
 				}(),
-				code: http.StatusInternalServerError,
+				code: http.StatusBadRequest,
 				body: "single PUT error\n",
 			},
 			{
@@ -217,7 +217,7 @@ func Test_All(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodDelete, ts.URL+"/test/fail", strings.NewReader("{\"foo\":\"bar\"}"))
 					return r
 				}(),
-				code: http.StatusInternalServerError,
+				code: http.StatusBadRequest,
 				body: "plural DELETE error\n",
 			},
 			{
@@ -235,7 +235,7 @@ func Test_All(t *testing.T) {
 					r, _ := http.NewRequest(http.MethodDelete, ts.URL+"/test/fail/abcd", nil)
 					return r
 				}(),
-				code: http.StatusInternalServerError,
+				code: http.StatusBadRequest,
 				body: "single DELETE error\n",
 			},
 		}

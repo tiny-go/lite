@@ -2,9 +2,9 @@ package lite
 
 import (
 	"context"
-	"errors"
 
-	"github.com/tiny-go/middleware"
+	"github.com/tiny-go/errors"
+	mw "github.com/tiny-go/middleware"
 )
 
 var (
@@ -37,21 +37,21 @@ func (c *mockController) Init() error { return nil }
 
 func (c *mockController) Get(_ context.Context, pk string) (interface{}, error) {
 	if c.ShouldFail {
-		return nil, errors.New("single GET error")
+		return nil, errors.BadRequest("single GET error")
 	}
 	return pk, nil
 }
 
 func (c *mockController) GetAll(context.Context) (interface{}, error) {
 	if c.ShouldFail {
-		return nil, errors.New("plural GET error")
+		return nil, errors.BadRequest("plural GET error")
 	}
 	return map[string]interface{}{"foo": "bar"}, nil
 }
 
 func (c *mockController) Post(_ context.Context, pk string, f func(v interface{}) error) (interface{}, error) {
 	if c.ShouldFail {
-		return nil, errors.New("single POST error")
+		return nil, errors.BadRequest("single POST error")
 	}
 	data := map[string]interface{}{"pk": pk}
 	return data, f(&data)
@@ -59,7 +59,7 @@ func (c *mockController) Post(_ context.Context, pk string, f func(v interface{}
 
 func (c *mockController) PostAll(_ context.Context, f func(v interface{}) error) (interface{}, error) {
 	if c.ShouldFail {
-		return nil, errors.New("plural POST error")
+		return nil, errors.BadRequest("plural POST error")
 	}
 	data := make(map[string]interface{})
 	return data, f(&data)
@@ -67,7 +67,7 @@ func (c *mockController) PostAll(_ context.Context, f func(v interface{}) error)
 
 func (c *mockController) Patch(_ context.Context, pk string, f func(v interface{}) error) (interface{}, error) {
 	if c.ShouldFail {
-		return nil, errors.New("single PATCH error")
+		return nil, errors.BadRequest("single PATCH error")
 	}
 	data := map[string]interface{}{"pk": pk}
 	return data, f(&data)
@@ -75,7 +75,7 @@ func (c *mockController) Patch(_ context.Context, pk string, f func(v interface{
 
 func (c *mockController) PatchAll(_ context.Context, f func(v interface{}) error) (interface{}, error) {
 	if c.ShouldFail {
-		return nil, errors.New("plural PATCH error")
+		return nil, errors.BadRequest("plural PATCH error")
 	}
 	data := make(map[string]interface{})
 	return data, f(&data)
@@ -83,7 +83,7 @@ func (c *mockController) PatchAll(_ context.Context, f func(v interface{}) error
 
 func (c *mockController) Put(_ context.Context, pk string, f func(v interface{}) error) (interface{}, error) {
 	if c.ShouldFail {
-		return nil, errors.New("single PUT error")
+		return nil, errors.BadRequest("single PUT error")
 	}
 	data := map[string]interface{}{"pk": pk}
 	return data, f(&data)
@@ -91,7 +91,7 @@ func (c *mockController) Put(_ context.Context, pk string, f func(v interface{})
 
 func (c *mockController) PutAll(_ context.Context, f func(v interface{}) error) (interface{}, error) {
 	if c.ShouldFail {
-		return nil, errors.New("plural PUT error")
+		return nil, errors.BadRequest("plural PUT error")
 	}
 	data := make(map[string]interface{})
 	return data, f(&data)
@@ -99,14 +99,14 @@ func (c *mockController) PutAll(_ context.Context, f func(v interface{}) error) 
 
 func (c *mockController) Delete(_ context.Context, pk string) (interface{}, error) {
 	if c.ShouldFail {
-		return nil, errors.New("single DELETE error")
+		return nil, errors.BadRequest("single DELETE error")
 	}
 	return pk, nil
 }
 
 func (c *mockController) DeleteAll(_ context.Context, f func(v interface{}) error) (interface{}, error) {
 	if c.ShouldFail {
-		return nil, errors.New("plural DELETE error")
+		return nil, errors.BadRequest("plural DELETE error")
 	}
 	data := make(map[string]interface{})
 	return data, f(&data)
