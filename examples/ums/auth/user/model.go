@@ -7,8 +7,8 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/tiny-go/errors"
-	"github.com/tiny-go/lite/example/claims"
-	"github.com/tiny-go/lite/example/config"
+	"github.com/tiny-go/lite/examples/ums/claims"
+	"github.com/tiny-go/lite/examples/ums/config"
 )
 
 // Auth is a user model.

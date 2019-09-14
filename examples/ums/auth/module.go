@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/tiny-go/lite"
-	"github.com/tiny-go/lite/example/auth/user"
+	"github.com/tiny-go/lite/examples/ums/auth/user"
 	mw "github.com/tiny-go/middleware"
 )
 

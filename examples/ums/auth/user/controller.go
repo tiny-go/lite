@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/tiny-go/lite"
-	"github.com/tiny-go/lite/example/config"
+	"github.com/tiny-go/lite/examples/ums/config"
 	mw "github.com/tiny-go/middleware"
 )
 

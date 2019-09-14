@@ -7,17 +7,20 @@ import (
 	"github.com/tiny-go/codec/driver"
 	"github.com/tiny-go/config"
 	"github.com/tiny-go/lite"
-	local "github.com/tiny-go/lite/example/config"
-	// register auth module
-	_ "github.com/tiny-go/lite/example/auth"
+	local "github.com/tiny-go/lite/examples/os/config"
+	"github.com/tiny-go/lite/examples/os/exec"
+
+	// register command module
+	_ "github.com/tiny-go/lite/examples/os/exec"
 	// register codecs
 	_ "github.com/tiny-go/codec/driver/json"
+	_ "github.com/tiny-go/codec/driver/text"
 	_ "github.com/tiny-go/codec/driver/xml"
 )
 
 func main() {
-	// set JSON codec as a default
-	driver.Default("application/json")
+	// set text/plain codec as a default
+	driver.Default("text/plain")
 	// load config
 	conf := new(local.Config)
 	if err := config.Init(conf, "demo"); err != nil {
@@ -27,10 +30,13 @@ func main() {
 	handler := lite.NewHandler()
 	// map config to the handler to make it available for all of the controllers
 	handler.Map(conf)
-	// "fake" some users (instead of passing database instance) and map as a dependency
-	handler.Map(map[string]string{
-		"admin@test.com": "admin",
-		"user@test.com":  "user",
+
+	handler.Map(exec.Commands{
+		"ls",
+		"pwd",
+		"poweroff",
+		"sensors",
+		"whoami",
 	})
 	// register modules
 	lite.Modules(func(alias string, module lite.Module) bool {
