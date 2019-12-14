@@ -52,11 +52,11 @@ func Test_All(t *testing.T) {
 			{
 				title: "plural GET with success",
 				request: func() *http.Request {
-					r, _ := http.NewRequest(http.MethodGet, ts.URL+"/test/pass", nil)
+					r, _ := http.NewRequest(http.MethodGet, ts.URL+"/test/pass?foo=bar", nil)
 					return r
 				}(),
 				code: http.StatusOK,
-				body: "{\"foo\":\"bar\"}\n",
+				body: "{\"foo\":[\"bar\"]}\n",
 			},
 			{
 				title: "plural GET with failure",
@@ -106,7 +106,7 @@ func Test_All(t *testing.T) {
 			{
 				title: "single POST with success",
 				request: func() *http.Request {
-					r, _ := http.NewRequest(http.MethodPost, ts.URL+"/test/pass/abcd", strings.NewReader("{\"foo\":\"bar\"}"))
+					r, _ := http.NewRequest(http.MethodPost, ts.URL+"/test/pass/abcd", strings.NewReader("{\"foo\":\"bar\",\"pk\":\"abcd\"}\n"))
 					return r
 				}(),
 				code: http.StatusOK,
@@ -205,11 +205,11 @@ func Test_All(t *testing.T) {
 			{
 				title: "plural DELETE with success",
 				request: func() *http.Request {
-					r, _ := http.NewRequest(http.MethodDelete, ts.URL+"/test/pass", strings.NewReader("{\"foo\":\"bar\"}"))
+					r, _ := http.NewRequest(http.MethodDelete, ts.URL+"/test/pass?foo=bar", nil)
 					return r
 				}(),
 				code: http.StatusOK,
-				body: "{\"foo\":\"bar\"}\n",
+				body: "{\"foo\":[\"bar\"]}\n",
 			},
 			{
 				title: "plural DELETE with failure",

@@ -6,9 +6,9 @@ import (
 	"io"
 	"os/exec"
 
-	"github.com/tiny-go/lite/examples/os/config"
 	"github.com/tiny-go/errors"
 	"github.com/tiny-go/lite"
+	"github.com/tiny-go/lite/examples/os/config"
 	mw "github.com/tiny-go/middleware"
 )
 
@@ -27,7 +27,7 @@ type Controller struct {
 func (c *Controller) Init() error { return nil }
 
 // Get handles os command request.
-func (c *Controller) Get(ctx context.Context, command string) (interface{}, error) {
+func (c *Controller) Get(_ context.Context, command string) (interface{}, error) {
 	if !c.Config.AllowAll && !c.Commands.Lookup(command) {
 		return nil, errors.NewForbidden(fmt.Errorf("command %q is not allowed", command))
 	}

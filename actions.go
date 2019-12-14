@@ -3,7 +3,7 @@ package lite
 import (
 	"net/http"
 
-	"github.com/tiny-go/middleware"
+	mw "github.com/tiny-go/middleware"
 )
 
 // options is responsible for handling OPTIONS request.
@@ -30,7 +30,7 @@ func getSingle(controller SingleGetter) http.HandlerFunc {
 func getPlural(controller PluralGetter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
-		data, err := controller.GetAll(r.Context())
+		data, err := controller.GetAll(r.Context(), r.URL.Query())
 		if err != nil {
 			panic(err)
 		}
@@ -43,7 +43,7 @@ func getPlural(controller PluralGetter) http.HandlerFunc {
 func postSingle(controller SinglePoster) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
-		data, err := controller.Post(r.Context(), ParamsFromContext(r.Context())["pk"], func(v interface{}) error {
+		data, err := controller.Post(r.Context(), func(v interface{}) error {
 			return mw.RequestCodecFromContext(r.Context()).Decoder(r.Body).Decode(v)
 		})
 		if err != nil {
@@ -88,7 +88,7 @@ func patchSingle(controller SinglePatcher) http.HandlerFunc {
 func patchPlural(controller PluralPatcher) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
-		data, err := controller.PatchAll(r.Context(), func(v interface{}) error {
+		data, err := controller.PatchAll(r.Context(), r.URL.Query(), func(v interface{}) error {
 			return mw.RequestCodecFromContext(r.Context()).Decoder(r.Body).Decode(v)
 		})
 		if err != nil {
@@ -118,7 +118,7 @@ func putSingle(controller SinglePutter) http.HandlerFunc {
 func putPlural(controller PluralPutter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
-		data, err := controller.PutAll(r.Context(), func(v interface{}) error {
+		data, err := controller.PutAll(r.Context(), r.URL.Query(), func(v interface{}) error {
 			return mw.RequestCodecFromContext(r.Context()).Decoder(r.Body).Decode(v)
 		})
 		if err != nil {
@@ -146,9 +146,7 @@ func deleteSingle(controller SingleDeleter) http.HandlerFunc {
 func deletePlural(controller PluralDeleter) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// call the controller action
-		data, err := controller.DeleteAll(r.Context(), func(v interface{}) error {
-			return mw.RequestCodecFromContext(r.Context()).Decoder(r.Body).Decode(v)
-		})
+		data, err := controller.DeleteAll(r.Context(), r.URL.Query())
 		if err != nil {
 			panic(err)
 		}

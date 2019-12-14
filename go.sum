@@ -1,0 +1,13 @@
+github.com/codegangsta/inject v0.0.0-20150114235600-33e0aa1cb7c0 h1:sDMmm+q/3+BukdIpxwO365v/Rbspp2Nt5XntgQRXq8Q=
+github.com/codegangsta/inject v0.0.0-20150114235600-33e0aa1cb7c0/go.mod h1:4Zcjuz89kmFXt9morQgcfYZAYZ5n8WHjt81YYWIwtTM=
+github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
+github.com/gorilla/mux v1.7.3 h1:gnP5JzjVOuiZD07fKKToCAOjS0yOpj/qPETTXCCS6hw=
+github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
+github.com/tiny-go/codec v1.0.0 h1:GzOtsN6BLXAmbmlwoJ0wHSBxQAAupxYk0UAZPvEArrM=
+github.com/tiny-go/codec v1.0.0/go.mod h1:9bR0GUsR+ecErWI+jiR3WZuK7SVvzvrFCcpE4s35gDM=
+github.com/tiny-go/errors v1.0.0 h1:Q8YNDpx1q2bUTO4N+fO23ODpfAOX8N1khVNi8lLQ0wc=
+github.com/tiny-go/errors v1.0.0/go.mod h1:E8szF6M3T87HueDR8kveQ+aWUhYHBZ1QmSX80lu+fR4=
+github.com/tiny-go/middleware v1.0.0 h1:1sq+Pk7FOwy7m7DQJKq6kz3PVPPPUp/rK85Oerj7pEk=
+github.com/tiny-go/middleware v1.0.0/go.mod h1:X9/S2mm6V2jONrD/anEs8uglB+sRsw/SW1HRPDG1EoE=
+github.com/tiny-go/timap v1.0.0 h1:fA3YQfFAPnovp7pkiPZ2YnW5qhyannTw60k2Li2ulu8=
+github.com/tiny-go/timap v1.0.0/go.mod h1:gqsUWIiFMPTi/BhTx7Wg/E2m11PcvI8y29Ni5vpe5hE=

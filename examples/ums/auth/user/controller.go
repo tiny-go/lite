@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"net/url"
 
 	"github.com/tiny-go/lite"
 	"github.com/tiny-go/lite/examples/ums/config"
@@ -27,7 +28,7 @@ type Controller struct {
 func (c *Controller) Init() error { return nil }
 
 // PostAll handles user login request.
-func (c *Controller) PostAll(ctx context.Context, cf func(interface{}) error) (interface{}, error) {
+func (c *Controller) PostAll(_ context.Context, cf func(interface{}) error) (interface{}, error) {
 	auth := new(Auth)
 	if err := cf(auth); err != nil {
 		return nil, err
@@ -36,7 +37,7 @@ func (c *Controller) PostAll(ctx context.Context, cf func(interface{}) error) (i
 }
 
 // PatchAll handles user token refresh request.
-func (c *Controller) PatchAll(ctx context.Context, cf func(interface{}) error) (interface{}, error) {
+func (c *Controller) PatchAll(_ context.Context, _ url.Values, cf func(interface{}) error) (interface{}, error) {
 	auth := new(Auth)
 	if err := cf(auth); err != nil {
 		return nil, err

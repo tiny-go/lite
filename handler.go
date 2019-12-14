@@ -13,6 +13,9 @@ import (
 	mw "github.com/tiny-go/middleware"
 )
 
+// global handler for http errors
+var errFn = http.Error
+
 // Handler interface describes HTTP API handler.
 type Handler interface {
 	http.Handler
@@ -65,7 +68,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(basePath...),
 				// apply default middleware (no need to close the body with mw.BodyClose)
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(errFn, driver.Global()), GorillaParams).
 					// extract custom (user defined) middleware for HTTP method GET
 					Use(controller.Middleware(http.MethodGet)).
 					// set final handler
@@ -81,7 +84,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(append(basePath, "{pk}")...),
 				// apply default middleware (no need to close the body with mw.BodyClose)
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(errFn, driver.Global()), GorillaParams).
 					// extract custom (user defined) middleware for HTTP method GET
 					Use(controller.Middleware(http.MethodGet)).
 					// set final handler
@@ -97,7 +100,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(basePath...),
 				// apply default middleware
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(errFn, driver.Global()), mw.BodyClose, GorillaParams).
 					// extract custom (user defined) middleware for HTTP method POST
 					Use(controller.Middleware(http.MethodPost)).
 					// set final handler
@@ -113,7 +116,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(append(basePath, "{pk}")...),
 				// apply default middleware
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(errFn, driver.Global()), mw.BodyClose, GorillaParams).
 					// extract custom (user defined) middleware for HTTP method POST
 					Use(controller.Middleware(http.MethodPost)).
 					// set final handler
@@ -129,7 +132,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(basePath...),
 				// apply default middleware
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(errFn, driver.Global()), mw.BodyClose, GorillaParams).
 					// extract custom (user defined) middleware for HTTP method PATCH
 					Use(controller.Middleware(http.MethodPatch)).
 					// set final handler
@@ -145,7 +148,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(append(basePath, "{pk}")...),
 				// apply default middleware
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(errFn, driver.Global()), mw.BodyClose, GorillaParams).
 					// extract custom (user defined) middleware for HTTP method PATCH
 					Use(controller.Middleware(http.MethodPatch)).
 					// set final handler
@@ -161,7 +164,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(basePath...),
 				// apply default middleware
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(errFn, driver.Global()), mw.BodyClose, GorillaParams).
 					// extract custom (user defined) middleware for HTTP method PUT
 					Use(controller.Middleware(http.MethodPut)).
 					// set final handler
@@ -177,7 +180,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(append(basePath, "{pk}")...),
 				// apply default middleware
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(errFn, driver.Global()), mw.BodyClose, GorillaParams).
 					// extract custom (user defined) middleware for HTTP method PUT
 					Use(controller.Middleware(http.MethodPut)).
 					// set final handler
@@ -193,7 +196,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(basePath...),
 				// apply default middleware
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(errFn, driver.Global()), mw.BodyClose, GorillaParams).
 					// extract custom (user defined) middleware for HTTP method DELETE
 					Use(controller.Middleware(http.MethodDelete)).
 					// set final handler
@@ -209,7 +212,7 @@ func (h *handler) Use(alias string, module Module) (err error) {
 			h.Router.Handle(
 				path.Join(append(basePath, "{pk}")...),
 				// apply default middleware
-				mw.New(mw.PanicRecover(errors.Send), mw.Codec(driver.Global()), mw.BodyClose, GorillaParams).
+				mw.New(mw.PanicRecover(errors.Send), mw.Codec(errFn, driver.Global()), mw.BodyClose, GorillaParams).
 					// extract custom (user defined) middleware for HTTP method DELETE
 					Use(controller.Middleware(http.MethodDelete)).
 					// set final handler
