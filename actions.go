@@ -21,6 +21,7 @@ func getSingle(controller SingleGetter) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		w.Header().Set("Content-Type", mw.ResponseCodecFromContext(r.Context()).MimeType())
 		// send the success response
 		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
 	}
@@ -34,6 +35,7 @@ func getPlural(controller PluralGetter) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		w.Header().Set("Content-Type", mw.ResponseCodecFromContext(r.Context()).MimeType())
 		// send data to the client
 		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
 	}
@@ -49,6 +51,7 @@ func postSingle(controller SinglePoster) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		w.Header().Set("Content-Type", mw.ResponseCodecFromContext(r.Context()).MimeType())
 		// send data to the client
 		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
 	}
@@ -64,6 +67,7 @@ func postPlural(controller PluralPoster) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		w.Header().Set("Content-Type", mw.ResponseCodecFromContext(r.Context()).MimeType())
 		// send data to the client
 		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
 	}
@@ -79,6 +83,7 @@ func patchSingle(controller SinglePatcher) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		w.Header().Set("Content-Type", mw.ResponseCodecFromContext(r.Context()).MimeType())
 		// send data to the client
 		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
 	}
@@ -94,6 +99,7 @@ func patchPlural(controller PluralPatcher) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		w.Header().Set("Content-Type", mw.ResponseCodecFromContext(r.Context()).MimeType())
 		// send data to the client
 		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
 	}
@@ -109,6 +115,7 @@ func putSingle(controller SinglePutter) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		w.Header().Set("Content-Type", mw.ResponseCodecFromContext(r.Context()).MimeType())
 		// send data to the client
 		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
 	}
@@ -124,6 +131,7 @@ func putPlural(controller PluralPutter) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		w.Header().Set("Content-Type", mw.ResponseCodecFromContext(r.Context()).MimeType())
 		// send data to the client
 		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
 	}
@@ -137,6 +145,7 @@ func deleteSingle(controller SingleDeleter) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		w.Header().Set("Content-Type", mw.ResponseCodecFromContext(r.Context()).MimeType())
 		// send data to the client
 		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
 	}
@@ -150,6 +159,7 @@ func deletePlural(controller PluralDeleter) http.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		w.Header().Set("Content-Type", mw.ResponseCodecFromContext(r.Context()).MimeType())
 		// send data to the client
 		panic(mw.ResponseCodecFromContext(r.Context()).Encoder(w).Encode(data))
 	}

@@ -7,7 +7,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gorilla/mux v1.7.3
 	github.com/tiny-go/codec v1.0.0
-	github.com/tiny-go/config v1.0.0 // indirect
+	github.com/tiny-go/config v1.0.0
 	github.com/tiny-go/errors v1.0.0
 	github.com/tiny-go/middleware v1.0.0
 )
